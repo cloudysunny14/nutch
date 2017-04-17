@@ -17,7 +17,6 @@
 package org.apache.nutch.api.security;
 
 import org.apache.nutch.api.ConfManager;
-import org.apache.nutch.api.resources.ConfigResource;
 import org.restlet.ext.jaxrs.JaxRsApplication;
 import org.restlet.security.MapVerifier;
 import org.restlet.security.MemoryRealm;
@@ -29,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,14 +36,15 @@ import java.util.List;
  * Utility class for security operations for NutchServer REST API.
  *
  */
-public final class SecurityUtil {
+public final class SecurityUtils {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SecurityUtil.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /**
    * Private constructor to prevent instantiation
    */
-  private SecurityUtil() {
+  private SecurityUtils() {
   }
 
   /**
@@ -66,13 +67,14 @@ public final class SecurityUtil {
    *
    * @param application {@link org.restlet.ext.jaxrs.JaxRsApplication }application
    * @param configManager {@link org.apache.nutch.api.ConfManager} type config manager
+   * @param confId Configuration id to use from {@link org.apache.nutch.api.ConfManager} type config manager
    * @return realm
    */
-  public static MemoryRealm constructRealm(JaxRsApplication application, ConfManager configManager){
+  public static MemoryRealm constructRealm(JaxRsApplication application, ConfManager configManager, String confId){
     MemoryRealm realm = new MemoryRealm();
     MapVerifier mapVerifier = new MapVerifier();
-    String[] users = configManager.get(ConfigResource.DEFAULT).getTrimmedStrings("restapi.auth.users", "admin|admin|admin,user|user|user");
-    if (users.length <= 1) {
+    String[] users = configManager.get(confId).getTrimmedStrings("restapi.auth.users", "admin|admin|admin,user|user|user");
+    if (users.length < 1) {
       throw new IllegalStateException("Check users definition of restapi.auth.users at nutch-site.xml ");
     }
     for (String userconf : users) {

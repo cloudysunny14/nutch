@@ -31,6 +31,7 @@ import org.apache.nutch.util.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,13 +49,13 @@ import java.util.Map.Entry;
  * is used to remove duplicates during the dedup procedure. It is calculated
  * using {@link org.apache.nutch.crawl.MD5Signature} or
  * {@link org.apache.nutch.crawl.TextProfileSignature}.</li>
- * <li><tt>Version</tt>: From {@link org.apache.nutch.parse.ParseData}.</li>
- * <li><tt>Status</tt>: From {@link org.apache.nutch.parse.ParseData}.</li>
+ * <li><tt>Version</tt>: From org.apache.nutch.parse.ParseData.</li>
+ * <li><tt>Status</tt>: From org.apache.nutch.parse.ParseData.</li>
  * <li><tt>Title</tt>: of the URL</li>
  * <li><tt>Outlinks</tt>: associated with the URL</li>
  * <li><tt>Content Metadata</tt>: such as <i>X-AspNet-Version</i>, <i>Date</i>,
  * <i>Content-length</i>, <i>servedBy</i>, <i>Content-Type</i>,
- * <i>Cache-Control</>, etc.</li>
+ * <i>Cache-Control</i>, etc.</li>
  * <li><tt>Parse Metadata</tt>: such as <i>CharEncodingForConversion</i>,
  * <i>OriginalCharEncoding</i>, <i>language</i>, etc.</li>
  * <li><tt>ParseText</tt>: The page parse text which varies in length depdnecing
@@ -66,7 +67,8 @@ import java.util.Map.Entry;
 
 public class ParserChecker implements Tool {
 
-  public static final Logger LOG = LoggerFactory.getLogger(ParserChecker.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
   private Configuration conf;
 
   public ParserChecker() {

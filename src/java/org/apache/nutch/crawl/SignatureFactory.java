@@ -18,6 +18,7 @@
 package org.apache.nutch.crawl;
 
 // Commons Logging imports
+import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -35,12 +36,17 @@ import org.apache.nutch.util.ObjectCache;
  */
 public class SignatureFactory {
   private static final Logger LOG = LoggerFactory
-      .getLogger(SignatureFactory.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private SignatureFactory() {
   } // no public ctor
 
-  /** Return the default Signature implementation. */
+  /**
+   * Returns the default {@link Signature} implementation
+   *
+   * @param conf configuration
+   * @return default {@link Signature} implementation
+   */
   public static Signature getSignature(Configuration conf) {
     String clazz = conf.get("db.signature.class", MD5Signature.class.getName());
     ObjectCache objectCache = ObjectCache.get(conf);

@@ -18,11 +18,15 @@
 package org.apache.nutch.tools;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.*;
 
 import javax.xml.parsers.*;
+
+import org.apache.hadoop.util.StringUtils;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import org.apache.xerces.util.XMLChar;
@@ -42,7 +46,8 @@ import org.apache.nutch.util.TableUtil;
 
 /** Utility that converts DMOZ RDF into a flat file of URLs to be injected. */
 public class DmozParser {
-  public static final Logger LOG = LoggerFactory.getLogger(DmozParser.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   long pages = 0;
   private static DataStore<String, WebPage> store = null;
@@ -195,12 +200,12 @@ public class DmozParser {
               if (row != null) {
                 if (desc.length() > 0) {
                   row.getMetadata().put(new Utf8("_dmoz_desc_"),
-                      ByteBuffer.wrap(desc.toString().getBytes()));
+                      ByteBuffer.wrap(desc.toString().getBytes(StandardCharsets.UTF_8)));
                   desc.delete(0, desc.length());
                 }
                 if (title.length() > 0) {
                   row.getMetadata().put(new Utf8("_dmoz_title_"),
-                      ByteBuffer.wrap(title.toString().getBytes()));
+                      ByteBuffer.wrap(title.toString().getBytes(StandardCharsets.UTF_8)));
                   title.delete(0, title.length());
                 }
                 store.put(reversedUrl, row);
@@ -209,7 +214,7 @@ public class DmozParser {
 
             } catch (IOException e) {
               // TODO Auto-generated catch block
-              e.printStackTrace();
+              LOG.error(StringUtils.stringifyException(e));
             }
           } else {
             System.out.println(curURL);

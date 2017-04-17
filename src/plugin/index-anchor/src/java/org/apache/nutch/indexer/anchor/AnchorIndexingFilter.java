@@ -16,6 +16,7 @@
  */
 package org.apache.nutch.indexer.anchor;
 
+import java.lang.invoke.MethodHandles;
 import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
@@ -30,17 +31,18 @@ import java.lang.CharSequence;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Locale;
 
 /**
  * Indexing filter that offers an option to either index all inbound anchor text
  * for a document or deduplicate anchors. Deduplication does have it's con's,
  * 
- * @see {@code anchorIndexingFilter.deduplicate} in nutch-default.xml.
+ * Check {@code anchorIndexingFilter.deduplicate} in nutch-default.xml.
  */
 public class AnchorIndexingFilter implements IndexingFilter {
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(AnchorIndexingFilter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
   private Configuration conf;
   private boolean deduplicate = false;
 
@@ -97,7 +99,7 @@ public class AnchorIndexingFilter implements IndexingFilter {
       if (deduplicate) {
         if (set == null)
           set = new HashSet<String>();
-        String lcAnchor = anchor.toLowerCase();
+        String lcAnchor = anchor.toLowerCase(Locale.ROOT);
 
         // Check if already processed the current anchor
         if (!set.contains(lcAnchor)) {

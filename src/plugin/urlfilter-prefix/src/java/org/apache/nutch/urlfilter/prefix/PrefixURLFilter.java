@@ -19,6 +19,7 @@
 
 package org.apache.nutch.urlfilter.prefix;
 
+import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -48,12 +50,12 @@ import java.util.ArrayList;
  * 
  * <p>
  * The format of this file is one URL prefix per line.
- * </p>
+ *
  */
 public class PrefixURLFilter implements URLFilter {
 
   private static final Logger LOG = LoggerFactory
-      .getLogger(PrefixURLFilter.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   // read in attribute "file" of this plugin.
   private static String attributeFile = null;
@@ -109,7 +111,7 @@ public class PrefixURLFilter implements URLFilter {
     else
       filter = new PrefixURLFilter();
 
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
     String line;
     while ((line = in.readLine()) != null) {
       String out = filter.filter(line);

@@ -17,6 +17,7 @@
 
 package org.apache.nutch.protocol.http.api;
 
+import java.lang.invoke.MethodHandles;
 import crawlercommons.robots.BaseRobotRules;
 import crawlercommons.robots.SimpleRobotRules;
 import org.apache.hadoop.conf.Configuration;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Locale;
 
 /**
  * This class is used for parsing robots for urls belonging to HTTP protocol. It
@@ -36,8 +38,9 @@ import java.net.URL;
  */
 public class HttpRobotRulesParser extends RobotRulesParser {
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(HttpRobotRulesParser.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
+
   protected boolean allowForbidden = false;
 
   HttpRobotRulesParser() {
@@ -50,9 +53,9 @@ public class HttpRobotRulesParser extends RobotRulesParser {
 
   /** Compose unique key to store and access robot rules in cache for given URL */
   protected static String getCacheKey(URL url) {
-    String protocol = url.getProtocol().toLowerCase(); // normalize to lower
+    String protocol = url.getProtocol().toLowerCase(Locale.ROOT); // normalize to lower
                                                        // case
-    String host = url.getHost().toLowerCase(); // normalize to lower case
+    String host = url.getHost().toLowerCase(Locale.ROOT); // normalize to lower case
     int port = url.getPort();
     if (port == -1) {
       port = url.getDefaultPort();

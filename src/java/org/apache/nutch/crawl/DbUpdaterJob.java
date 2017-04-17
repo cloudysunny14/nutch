@@ -16,9 +16,11 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.avro.util.Utf8;
@@ -45,7 +47,8 @@ import org.slf4j.LoggerFactory;
 
 public class DbUpdaterJob extends NutchTool implements Tool {
 
-  public static final Logger LOG = LoggerFactory.getLogger(DbUpdaterJob.class);
+  protected static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
@@ -129,7 +132,7 @@ public class DbUpdaterJob extends NutchTool implements Tool {
 
   private int updateTable(String crawlId, String batchId) throws Exception {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     long start = System.currentTimeMillis();
     LOG.info("DbUpdaterJob: starting at " + sdf.format(start));
 

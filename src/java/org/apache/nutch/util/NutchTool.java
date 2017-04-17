@@ -17,10 +17,14 @@
 package org.apache.nutch.util;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.hadoop.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.nutch.metadata.Nutch;
@@ -33,24 +37,34 @@ public abstract class NutchTool extends Configured {
   protected Job currentJob;
   protected int numJobs;
   protected int currentJobNum;
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /**
    * Runs the tool, using a map of arguments. May return results, or null.
+   *
+   * @param args map of arguments
+   * @return results or null
+   * @throws Exception
    */
   public abstract Map<String, Object> run(Map<String, Object> args)
       throws Exception;
 
-  /** Returns relative progress of the tool, a float in range [0,1]. */
+  /**
+   * Returns relative progress of the tool, a float in range [0,1]
+   *
+   * @return relative progress of the tool, a float in range [0,1]
+   */
   public float getProgress() {
     float res = 0;
     if (currentJob != null) {
       try {
         res = (currentJob.mapProgress() + currentJob.reduceProgress()) / 2.0f;
       } catch (IOException e) {
-        e.printStackTrace();
+        LOG.error(StringUtils.stringifyException(e));
         res = 0;
       } catch (IllegalStateException ile) {
-        ile.printStackTrace();
+        LOG.error(StringUtils.stringifyException(ile));
         res = 0;
       }
     }
@@ -62,7 +76,11 @@ public abstract class NutchTool extends Configured {
     return res;
   }
 
-  /** Returns current status of the running tool. */
+  /**
+   * Returns current status of the running tool
+   *
+   * @return current status of the running tool
+   */
   public Map<String, Object> getStatus() {
     return status;
   }
@@ -72,6 +90,7 @@ public abstract class NutchTool extends Configured {
    * this, since by default it calls {@link #killJob()}.
    * 
    * @return true if succeeded, false otherwise
+   * @throws Exception
    */
   public boolean stopJob() throws Exception {
     return killJob();
@@ -90,7 +109,7 @@ public abstract class NutchTool extends Configured {
         currentJob.killJob();
         return true;
       } catch (Exception e) {
-        e.printStackTrace();
+        LOG.error(StringUtils.stringifyException(e));
         return false;
       }
     }

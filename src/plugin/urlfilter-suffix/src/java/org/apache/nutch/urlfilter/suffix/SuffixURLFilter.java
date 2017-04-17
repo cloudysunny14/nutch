@@ -17,6 +17,7 @@
 
 package org.apache.nutch.urlfilter.suffix;
 
+import java.lang.invoke.MethodHandles;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.net.*;
 
@@ -33,11 +34,14 @@ import java.io.Reader;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -65,22 +69,22 @@ import java.net.MalformedURLException;
  * The format of this config file is one URL suffix per line, with no preceding
  * whitespace. Order, in which suffixes are specified, doesn't matter. Blank
  * lines and comments (#) are allowed.
- * </p>
+ *
  * <p>
  * A single '+' or '-' sign not followed by any suffix must be used once, to
  * signify the mode this plugin operates in. An optional single 'I' can be
  * appended, to signify that suffix matches should be case-insensitive. The
  * default, if not specified, is to use case-sensitive matches, i.e. suffix
  * '.JPG' does not match '.jpg'.
- * </p>
+ *
  * <p>
  * NOTE: the format of this file is different from urlfilter-prefix, because
  * that plugin doesn't support allowed/prohibited prefixes (only supports
  * allowed prefixes). Please note that this plugin does not support regular
  * expressions, it only accepts literal suffixes. I.e. a suffix "+*.jpg" is most
  * probably wrong, you should use "+.jpg" instead.
- * </p>
- * <h4>Example 1</h4>
+ *
+ * <strong>Example 1</strong>
  * <p>
  * The configuration shown below will accept all URLs with '.html' or '.htm'
  * suffixes (case-sensitive - '.HTML' or '.HTM' will be rejected), and prohibit
@@ -98,8 +102,8 @@ import java.net.MalformedURLException;
  *  .htm
  * </pre>
  * 
- * </p>
- * <h4>Example 2</h4>
+ *
+ * <strong>Example 2</strong>
  * <p>
  * The configuration shown below will accept all URLs except common graphical
  * formats.
@@ -119,14 +123,14 @@ import java.net.MalformedURLException;
  *  .bmp
  * </pre>
  * 
- * </p>
+ *
  * 
  * @author Andrzej Bialecki
  */
 public class SuffixURLFilter implements URLFilter {
 
   private static final Logger LOG = LoggerFactory
-      .getLogger(SuffixURLFilter.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   // read in attribute "file" of this plugin.
   private String attributeFile = null;
@@ -151,7 +155,7 @@ public class SuffixURLFilter implements URLFilter {
       return null;
     String _url;
     if (ignoreCase)
-      _url = url.toLowerCase();
+      _url = url.toLowerCase(Locale.ROOT);
     else
       _url = url;
     if (filterFromPath) {
@@ -225,7 +229,7 @@ public class SuffixURLFilter implements URLFilter {
     }
     if (ignore) {
       for (int i = 0; i < aSuffixes.size(); i++) {
-        aSuffixes.set(i, ((String) aSuffixes.get(i)).toLowerCase());
+        aSuffixes.set(i, ((String) aSuffixes.get(i)).toLowerCase(Locale.ROOT));
       }
     }
     suffixes = new SuffixStringMatcher(aSuffixes);
@@ -236,14 +240,14 @@ public class SuffixURLFilter implements URLFilter {
   public static void main(String args[]) throws IOException {
 
     SuffixURLFilter filter;
-    if (args.length >= 1)
-      filter = new SuffixURLFilter(new FileReader(args[0]));
-    else {
+    if (args.length >= 1) {
+      filter = new SuffixURLFilter(new InputStreamReader(new FileInputStream(args[0]), StandardCharsets.UTF_8));
+    } else {
       filter = new SuffixURLFilter();
       filter.setConf(NutchConfiguration.create());
     }
 
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
     String line;
     while ((line = in.readLine()) != null) {
       String out = filter.filter(line);

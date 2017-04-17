@@ -17,6 +17,7 @@
 
 package org.apache.nutch.parse.tika;
 
+import java.lang.invoke.MethodHandles;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.CompositeParser;
 import org.junit.Test;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.DocumentFragment;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -185,8 +187,8 @@ public class DOMContentUtilsTest {
   private static Configuration conf;
   private static DOMContentUtils utils = null;
 
-  public static final Logger Logger = LoggerFactory
-      .getLogger(DOMContentUtilsTest.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   public DOMContentUtilsTest(String name) {
   }
@@ -210,7 +212,7 @@ public class DOMContentUtilsTest {
       // to add once available in Tika
       // context.set(HtmlMapper.class, IdentityHtmlMapper.INSTANCE);
       try {
-        parser.parse(new ByteArrayInputStream(testPages[i].getBytes()),
+        parser.parse(new ByteArrayInputStream(testPages[i].getBytes(StandardCharsets.UTF_8)),
             domhandler, tikamd, context);
         testBaseHrefURLs[i] = new URL(testBaseHrefs[i]);
       } catch (Exception e) {
@@ -278,13 +280,13 @@ public class DOMContentUtilsTest {
 
     while (st1.hasMoreTokens()) {
       if (!st2.hasMoreTokens()) {
-        Logger.info("st1+ '" + st1.nextToken() + "'");
+        LOG.info("st1+ '" + st1.nextToken() + "'");
         return false;
       }
       String st1Token = st1.nextToken();
       String st2Token = st2.nextToken();
       if (!st1Token.equals(st2Token)) {
-        Logger.info("st1:'" + st1Token + "' != st2:'" + st2Token + "'");
+        LOG.info("st1:'" + st1Token + "' != st2:'" + st2Token + "'");
         return false;
       }
     }

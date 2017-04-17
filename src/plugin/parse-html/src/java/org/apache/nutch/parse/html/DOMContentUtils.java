@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.util.NodeWalker;
@@ -112,7 +113,7 @@ public class DOMContentUtils {
 
   /**
    * This is a convinience method, equivalent to
-   * {@link #getText(StringBuffer,Node,boolean) getText(sb, node, false)}.
+   * {@link #getText(StringBuilder, Node, boolean)} which passes false as third argument
    * 
    */
   public void getText(StringBuilder sb, Node node) {
@@ -320,7 +321,7 @@ public class DOMContentUtils {
 
       if (nodeType == Node.ELEMENT_NODE) {
 
-        nodeName = nodeName.toLowerCase();
+        nodeName = nodeName.toLowerCase(Locale.ROOT);
         LinkParams params = linkParams.get(nodeName);
         if (params != null) {
           if (!shouldThrowAwayLink(currentNode, children, childLen, params)) {

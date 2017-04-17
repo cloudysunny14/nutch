@@ -17,13 +17,16 @@
 package org.apache.nutch.urlfilter.api;
 
 // JDK imports
+import java.lang.invoke.MethodHandles;
 import java.io.File;
 import java.io.Reader;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -42,25 +45,19 @@ import org.apache.nutch.net.*;
  * expressions.
  * 
  * <p>
- * The regular expressions rules are expressed in a file. The file of rules is
- * provided by each implementation using the
- * {@link #getRulesFile(Configuration)} method.
- * </p>
- * 
- * <p>
- * The format of this file is made of many rules (one per line):<br/>
+ * The format of this file is made of many rules (one per line):<br>
  * <code>
  * [+-]&lt;regex&gt;
- * </code><br/>
+ * </code><br>
  * where plus (<code>+</code>)means go ahead and index it and minus (
  * <code>-</code>)means no.
- * </p>
+ *
  */
 public abstract class RegexURLFilterBase implements URLFilter {
 
   /** My logger */
-  private final static Logger LOG = LoggerFactory
-      .getLogger(RegexURLFilterBase.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /** An array of applicable rules */
   private List<RegexRule> rules;
@@ -82,7 +79,7 @@ public abstract class RegexURLFilterBase implements URLFilter {
    */
   public RegexURLFilterBase(File filename) throws IOException,
       IllegalArgumentException {
-    this(new FileReader(filename));
+    this(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
   }
 
   /**
@@ -245,7 +242,7 @@ public abstract class RegexURLFilterBase implements URLFilter {
   public static void main(RegexURLFilterBase filter, String args[])
       throws IOException, IllegalArgumentException {
 
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
     String line;
     while ((line = in.readLine()) != null) {
       String out = filter.filter(line);

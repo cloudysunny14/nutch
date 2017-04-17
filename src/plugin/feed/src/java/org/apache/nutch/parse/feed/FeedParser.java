@@ -17,6 +17,7 @@
 package org.apache.nutch.parse.feed;
 
 // JDK imports
+import java.lang.invoke.MethodHandles;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -64,7 +65,7 @@ import com.sun.syndication.io.SyndFeedInput;
  * <p>
  * A new RSS/ATOM Feed{@link Parser} that rapidly parses all referenced links
  * and content present in the feed.
- * </p>
+ *
  * 
  */
 public class FeedParser implements Parser {
@@ -74,8 +75,8 @@ public class FeedParser implements Parser {
   public static final String TEXT_PLAIN_CONTENT_TYPE = "text/plain; "
       + CHARSET_UTF8;
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger("org.apache.nutch.parse.feed");
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private Configuration conf;
 

@@ -17,6 +17,7 @@
 
 package org.apache.nutch.net.urlnormalizer.regex;
 
+import java.lang.invoke.MethodHandles;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -24,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,7 +43,7 @@ import org.apache.nutch.util.NutchConfiguration;
 /** Unit tests for RegexUrlNormalizer. */
 public class TestRegexURLNormalizer {
   private static final Logger LOG = LoggerFactory
-      .getLogger(TestRegexURLNormalizer.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private RegexURLNormalizer normalizer;
   private Configuration conf;
@@ -68,10 +70,10 @@ public class TestRegexURLNormalizer {
     });
     for (int i = 0; i < configs.length; i++) {
       try {
-        FileReader reader = new FileReader(configs[i]);
+        InputStreamReader isr = new InputStreamReader(new FileInputStream(configs[i]), StandardCharsets.UTF_8);;
         String cname = configs[i].getName();
         cname = cname.substring(16, cname.indexOf(".xml"));
-        normalizer.setConfiguration(reader, cname);
+        normalizer.setConfiguration(isr, cname);
         NormalizedURL[] urls = readTestFile(cname);
         testData.put(cname, urls);
       } catch (Exception e) {

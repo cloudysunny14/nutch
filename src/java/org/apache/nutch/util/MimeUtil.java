@@ -21,6 +21,7 @@ package org.apache.nutch.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 
 // Hadoop imports
 import org.apache.hadoop.conf.Configuration;
@@ -50,7 +51,7 @@ import org.apache.nutch.protocol.ProtocolOutput;
  *        substrate library, <a href="http://incubator.apache.org/tika/">Apache
  *        Tika</a>. Any mime handling code should be placed in this utility
  *        class, and hidden from the Nutch classes that rely on it.
- *        </p>
+ *
  */
 public final class MimeUtil {
 
@@ -66,8 +67,8 @@ public final class MimeUtil {
   private boolean mimeMagic;
 
   /* our log stream */
-  private static final Logger LOG = LoggerFactory.getLogger(MimeUtil.class
-      .getName());
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   public MimeUtil(Configuration conf) {
     tika = new Tika();
@@ -229,7 +230,7 @@ public final class MimeUtil {
    * method.
    * 
    * @param url
-   *          A string representation of the document {@link URL} to sense the
+   *          A string representation of the document. URL to sense the
    *          {@link MimeType} for.
    * @return An appropriate {@link MimeType}, identified from the given Document
    *         url in string form.

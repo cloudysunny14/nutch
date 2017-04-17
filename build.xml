@@ -63,6 +63,35 @@
  </path>
 
  <!-- ====================================================== -->
+ <!-- Forbidden APIs Targets -->
+ <!-- ====================================================== -->
+
+ <!-- will be used by forbiddenapis -->
+ <path id="all-lib-classpath">
+   <fileset dir="${build.lib.dir}">
+     <include name="**/*.jar" />
+   </fileset>
+   <fileset dir="${runtime.dir}/local/lib">
+     <include name="**/*.jar" />
+   </fileset>
+   <fileset dir="${runtime.dir}/local/plugins">
+     <include name="**/*.jar" />
+   </fileset>
+ </path>
+
+ <!-- forbiddenapis target -->
+ <target name="precommit" depends="runtime, test">
+   <!-- forbiddenapis task definition -->
+   <taskdef name="forbiddenapis" classname="de.thetaphi.forbiddenapis.ant.AntTask" classpath="${build.lib.dir}/forbiddenapis-2.2.jar"/>
+
+   <forbiddenapis classpathref="all-lib-classpath" dir="${build.dir}" targetVersion="${javac.version}">
+     <bundledsignatures name="jdk-unsafe"/>
+     <bundledsignatures name="jdk-deprecated"/>
+     <bundledsignatures name="jdk-non-portable"/>
+   </forbiddenapis>
+ </target>
+
+ <!-- ====================================================== -->
  <!-- Stuff needed by all targets -->
  <!-- ====================================================== -->
  <target name="init" depends="ivy-init" description="--> stuff required by all targets">
@@ -628,7 +657,8 @@
       <packageset dir="${plugins.dir}/index-html/src/java"/>
       <packageset dir="${plugins.dir}/index-metadata/src/java"/>
       <packageset dir="${plugins.dir}/index-more/src/java"/>
-      <packageset dir="${plugins.dir}/indexer-elastic/src/java"/>
+      <!--<packageset dir="${plugins.dir}/indexer-elastic/src/java"/>-->
+      <packageset dir="${plugins.dir}/indexer-elastic2/src/java"/>
       <packageset dir="${plugins.dir}/indexer-solr/src/java"/>
       <packageset dir="${plugins.dir}/language-identifier/src/java"/>
       <packageset dir="${plugins.dir}/lib-http/src/java"/>
@@ -991,7 +1021,8 @@
         <source path="${basedir}/src/plugin/feed/src/java/" />
         <source path="${basedir}/src/plugin/feed/src/test/" /> -->
         <source path="${basedir}/src/plugin/indexer-solr/src/java/" />
-      	<source path="${basedir}/src/plugin/indexer-elastic/src/java/" />
+      	<!--<source path="${basedir}/src/plugin/indexer-elastic/src/java/" />-->
+      	<source path="${basedir}/src/plugin/indexer-elastic2/src/java/" />
       	<source path="${basedir}/src/plugin/index-anchor/src/java/" />
         <source path="${basedir}/src/plugin/index-anchor/src/test/" />
         <source path="${basedir}/src/plugin/index-basic/src/java/" />

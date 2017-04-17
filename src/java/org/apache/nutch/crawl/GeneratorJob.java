@@ -19,12 +19,14 @@ package org.apache.nutch.crawl;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Collection;
+import java.util.Locale;
 
 import org.apache.hadoop.mapreduce.Job;
 import org.slf4j.Logger;
@@ -73,7 +75,8 @@ public class GeneratorJob extends NutchTool implements Tool {
     FIELDS.add(WebPage.Field.MARKERS);
   }
 
-  public static final Logger LOG = LoggerFactory.getLogger(GeneratorJob.class);
+  protected static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   public static class SelectorEntry implements
   WritableComparable<SelectorEntry> {
@@ -118,6 +121,14 @@ public class GeneratorJob extends NutchTool implements Tool {
 
     @Override
     public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+
+      if (this.getClass() != obj.getClass()) {
+        return false;
+      }
+
       SelectorEntry other = (SelectorEntry) obj;
       if (!url.equals(other.url))
         return false;
@@ -164,7 +175,11 @@ public class GeneratorJob extends NutchTool implements Tool {
     return fields;
   }
 
-  /** Generate a random batch id */
+  /**
+   * Generates a random batch id
+   *
+   * @return random batch id
+   */
   public static String randomBatchId() {
     long curTime = System.currentTimeMillis();
     int randomSeed = Math.abs(new Random().nextInt());
@@ -172,6 +187,13 @@ public class GeneratorJob extends NutchTool implements Tool {
     return batchId;
   }
 
+  /**
+   * Runs generator
+   *
+   * @param args map of arguments
+   * @return results
+   * @throws Exception
+   */
   public Map<String, Object> run(Map<String, Object> args) throws Exception {
     String batchId = (String) args.get(Nutch.ARG_BATCH);
     if (batchId == null) {
@@ -255,7 +277,7 @@ public class GeneratorJob extends NutchTool implements Tool {
   public String generate(long topN, long curTime, boolean filter, boolean norm,
       boolean sitemap) throws Exception {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     long start = System.currentTimeMillis();
     LOG.info("GeneratorJob: starting at {}", sdf.format(start));
     LOG.info("GeneratorJob: Selecting best-scoring urls due for fetch.");
@@ -289,6 +311,13 @@ public class GeneratorJob extends NutchTool implements Tool {
     return batchId;
   }
 
+  /**
+   * Runs generator from commandline
+   *
+   * @param args arguments
+   * @return returns -1
+   * @throws Exception
+   */
   public int run(String[] args) throws Exception {
     if (args.length <= 0) {
       System.out

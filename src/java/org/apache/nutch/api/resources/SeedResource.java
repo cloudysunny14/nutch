@@ -20,9 +20,11 @@ import static javax.ws.rs.core.Response.status;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.ws.rs.Consumes;
@@ -38,7 +40,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.nutch.api.model.request.SeedList;
 import org.apache.nutch.api.model.request.SeedUrl;
-import org.apache.nutch.api.security.SecurityUtil;
+import org.apache.nutch.api.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,8 @@ import com.google.common.io.Files;
 
 @Path("/seed")
 public class SeedResource extends AbstractResource {
-  private static final Logger log = LoggerFactory.getLogger(SeedResource.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   @Context
   SecurityContext securityContext;
@@ -60,7 +63,7 @@ public class SeedResource extends AbstractResource {
    * @return
    */
   public String createSeedFile(SeedList seedList) {
-    SecurityUtil.allowOnlyAdmin(securityContext);
+    SecurityUtils.allowOnlyAdmin(securityContext);
     if (seedList == null) {
       throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
           .entity("Seed list cannot be empty!").build());
@@ -90,9 +93,7 @@ public class SeedResource extends AbstractResource {
 
   private BufferedWriter getWriter(File seedFile) {
     try {
-      return new BufferedWriter(new FileWriter(seedFile));
-    } catch (FileNotFoundException e) {
-      throw handleException(e);
+      return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(seedFile), StandardCharsets.UTF_8));
     } catch (IOException e) {
       throw handleException(e);
     }
@@ -107,7 +108,7 @@ public class SeedResource extends AbstractResource {
   }
 
   private RuntimeException handleException(Exception e) {
-    log.error("Cannot create seed file!", e);
+    LOG.error("Cannot create seed file!", e);
     return new WebApplicationException(status(Status.INTERNAL_SERVER_ERROR)
         .entity("Cannot create seed file!").build());
   }

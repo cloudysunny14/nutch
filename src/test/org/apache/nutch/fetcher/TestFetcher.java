@@ -16,6 +16,7 @@
  */
 package org.apache.nutch.fetcher;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +54,8 @@ import static org.junit.Assert.*;
  */
 public class TestFetcher extends AbstractNutchTest {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AbstractNutchTest.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   final static Path testdir = new Path("build/test/fetch-test");
   Path urlPath;
@@ -161,13 +163,15 @@ public class TestFetcher extends AbstractNutchTest {
   /**
    * Tests a refetch of a URL. This process consists of two consecutive
    * inject, generate, fetch, parse then update cycles. The test configuration
-   * is defined such that <code>db.fetch.interval.default</code> is set to 
+   * is defined such that <code>db.fetch.interval.default</code> is set to
    * a very low value (indicating that the URL should be fetched again immediately).
    * In addition, configuration tests that relevant 
    * {@link org.apache.nutch.metadata.Metadata} is present and the values consistent 
    * and therefore not overwritten.
-   * @see https://issues.apache.org/jira/browse/NUTCH-2222
+   *
    * @throws Exception
+   *
+   * @see <a href="https://issues.apache.org/jira/browse/NUTCH-2222">https://issues.apache.org/jira/browse/NUTCH-2222</a>
    */
   @Test
   public void testReFetch() throws Exception {

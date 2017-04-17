@@ -17,11 +17,13 @@
 package org.apache.nutch.protocol.http.api;
 
 // JDK imports
+import java.lang.invoke.MethodHandles;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -87,10 +89,11 @@ public abstract class HttpBase implements Protocol {
   protected String accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 
   /** The default logger */
-  private final static Logger LOGGER = LoggerFactory.getLogger(HttpBase.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /** The specified logger */
-  private Logger logger = LOGGER;
+  private Logger logger = LOG;
 
   /** The nutch configuration */
   private Configuration conf = null;
@@ -351,7 +354,7 @@ public abstract class HttpBase implements Protocol {
 
   public String getUserAgent() {
     if (userAgentNames!=null) {
-      return userAgentNames.get(ThreadLocalRandom.current().nextInt(userAgentNames.size()-1));
+      return userAgentNames.get(ThreadLocalRandom.current().nextInt(userAgentNames.size()));
     }
     return userAgent;
   }
@@ -386,8 +389,8 @@ public abstract class HttpBase implements Protocol {
 
     if ((agentName == null) || (agentName.trim().length() == 0)) {
       // TODO : NUTCH-258
-      if (LOGGER.isErrorEnabled()) {
-        LOGGER.error("No User-Agent string set (http.agent.name)!");
+      if (LOG.isErrorEnabled()) {
+        LOG.error("No User-Agent string set (http.agent.name)!");
       }
     }
 
@@ -438,8 +441,8 @@ public abstract class HttpBase implements Protocol {
   public byte[] processGzipEncoded(byte[] compressed, URL url)
       throws IOException {
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("uncompressing....");
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("uncompressing....");
     }
 
     byte[] content;
@@ -452,8 +455,8 @@ public abstract class HttpBase implements Protocol {
     if (content == null)
       throw new IOException("unzipBestEffort returned null");
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("fetched " + compressed.length
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("fetched " + compressed.length
           + " bytes of compressed content (expanded to " + content.length
           + " bytes) from " + url);
     }
@@ -463,8 +466,8 @@ public abstract class HttpBase implements Protocol {
   public byte[] processDeflateEncoded(byte[] compressed, URL url)
       throws IOException {
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("inflating....");
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("inflating....");
     }
 
     byte[] content = DeflateUtils
@@ -473,8 +476,8 @@ public abstract class HttpBase implements Protocol {
     if (content == null)
       throw new IOException("inflateBestEffort returned null");
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("fetched " + compressed.length
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("fetched " + compressed.length
           + " bytes of compressed content (expanded to " + content.length
           + " bytes) from " + url);
     }
@@ -516,7 +519,7 @@ public abstract class HttpBase implements Protocol {
       System.out.println("Content Length: "
           + content.getMetadata().get(Response.CONTENT_LENGTH));
       System.out.println("Content:");
-      String text = new String(content.getContent());
+      String text = new String(content.getContent(), StandardCharsets.UTF_8);
       System.out.println(text);
     }
   }

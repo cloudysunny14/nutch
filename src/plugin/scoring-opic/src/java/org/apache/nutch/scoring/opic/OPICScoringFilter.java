@@ -17,6 +17,7 @@
 
 package org.apache.nutch.scoring.opic;
 
+import java.lang.invoke.MethodHandles;
 import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.NutchDocument;
@@ -39,7 +40,7 @@ import java.util.Set;
 /**
  * This plugin implements a variant of an Online Page Importance Computation
  * (OPIC) score, described in this paper: <a
- * href="http://www2003.org/cdrom/papers/refereed/p007/p7-abiteboul.html"/>
+ * href="http://www2003.org/cdrom/papers/refereed/p007/p7-abiteboul.html">
  * Abiteboul, Serge and Preda, Mihai and Cobena, Gregory (2003), Adaptive
  * On-Line Page Importance Computation </a>.
  * 
@@ -47,8 +48,8 @@ import java.util.Set;
  */
 public class OPICScoringFilter implements ScoringFilter {
 
-  private final static Logger LOG = LoggerFactory
-      .getLogger(OPICScoringFilter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private final static Utf8 CASH_KEY = new Utf8("_csh_");
 

@@ -18,6 +18,7 @@ package org.apache.nutch.parse;
 
 // JDK imports
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,8 +53,8 @@ import org.apache.nutch.util.NutchConfiguration;
 public class ParsePluginsReader {
 
   /* our log stream */
-  public static final Logger LOG = LoggerFactory
-      .getLogger(ParsePluginsReader.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /** The property name of the parse-plugins location */
   private static final String PP_FILE_PROP = "parse.plugin.file";
@@ -69,12 +70,10 @@ public class ParsePluginsReader {
 
   /**
    * Reads the <code>parse-plugins.xml</code> file and returns the
-   * {@link #ParsePluginList} defined by it.
+   * {@link ParsePluginList} defined by it.
    * 
-   * @return A {@link #ParsePluginList} specified by the
+   * @return A {@link ParsePluginList} specified by the
    *         <code>parse-plugins.xml</code> file.
-   * @throws Exception
-   *           If any parsing error occurs.
    */
   public ParsePluginList parse(Configuration conf) {
 

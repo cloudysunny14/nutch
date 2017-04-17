@@ -30,6 +30,7 @@ import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.lang.invoke.MethodHandles;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,10 +38,12 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.nio.charset.StandardCharsets;
 
 /** Adds metadata identifying the Creative Commons license used, if any. */
 public class CCParseFilter implements ParseFilter {
-  public static final Logger LOG = LoggerFactory.getLogger(CCParseFilter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /** Walks DOM tree, looking for RDF in comments and licenses in anchors. */
   public static class Walker {
@@ -87,9 +90,9 @@ public class CCParseFilter implements ParseFilter {
               + " of " + base);
         }
         page.getMetadata().put(new Utf8(CreativeCommons.LICENSE_URL),
-            ByteBuffer.wrap(licenseUrl.getBytes()));
+            ByteBuffer.wrap(licenseUrl.getBytes(StandardCharsets.UTF_8)));
         page.getMetadata().put(new Utf8(CreativeCommons.LICENSE_LOCATION),
-            ByteBuffer.wrap(licenseLocation.getBytes()));
+            ByteBuffer.wrap(licenseLocation.getBytes(StandardCharsets.UTF_8)));
       }
 
       if (walker.workType != null) {
@@ -97,7 +100,7 @@ public class CCParseFilter implements ParseFilter {
           LOG.debug("CC: found " + walker.workType + " in " + base);
         }
         page.getMetadata().put(new Utf8(CreativeCommons.WORK_TYPE),
-            ByteBuffer.wrap(walker.workType.getBytes()));
+            ByteBuffer.wrap(walker.workType.getBytes(StandardCharsets.UTF_8)));
       }
 
     }

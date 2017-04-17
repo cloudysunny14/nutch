@@ -624,6 +624,13 @@
   updatedb will generate identical fetchlists.</description>
 </property>
 
+<property>
+  <name>generate.min.score</name>
+  <value>0.0</value>
+  <description>Select only entries with a score larger than
+  generate.min.score.</description>
+</property>
+
 <!-- urlpartitioner properties -->
 <property>
   <name>partition.url.mode</name>
@@ -1458,10 +1465,10 @@
 
 <property>
   <name>restapi.auth.ssl.storepath</name>
-  <value>etc/nutch-ssl.keystore.jks</value>
+  <value>nutch-ssl.keystore.jks</value>
   <description>
     Key store path for jks file. restapi.auth property should be set to SSL to use this property.
-    etc/nutch-ssl.keystore.jks is used for restapi.auth.ssl.storepath as default.
+    nutch-ssl.keystore.jks is used for restapi.auth.ssl.storepath as default.
   </description>
 </property>
 
@@ -1482,5 +1489,16 @@
     "password" is used for restapi.auth.ssl.keypass as default.
   </description>
 </property>
+
+  <property>
+    <name>webgui.auth.users</name>
+    <value>admin|admin,user|user</value>
+    <description>
+      Username, password combination for Web GUI  authentication.
+      Username and password should be delimited by pipe character (|)
+      Every user should be separated with comma character (,). i.e. admin|admin,user|user.
+      Default is admin|admin,user|user
+    </description>
+  </property>
 
 </configuration>

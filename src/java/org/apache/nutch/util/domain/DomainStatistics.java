@@ -18,8 +18,10 @@
 package org.apache.nutch.util.domain;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.gora.query.Query;
@@ -53,7 +55,7 @@ import org.slf4j.LoggerFactory;
 public class DomainStatistics extends Configured implements Tool {
 
   private static final Logger LOG = LoggerFactory
-      .getLogger(DomainStatistics.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private static final Text FETCHED_TEXT = new Text("FETCHED");
   private static final Text NOT_FETCHED_TEXT = new Text("NOT_FETCHED");
@@ -97,7 +99,7 @@ public class DomainStatistics extends Configured implements Tool {
       }
     }
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     long start = System.currentTimeMillis();
     LOG.info("DomainStatistics: starting at " + sdf.format(start));
 

@@ -17,6 +17,8 @@
 package org.apache.nutch.tools;
 
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +44,8 @@ import org.apache.nutch.util.NutchConfiguration;
 import org.apache.nutch.util.NutchJob;
 
 public class Benchmark extends Configured implements Tool {
-  private static final Logger LOG = LoggerFactory.getLogger(Benchmark.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   public static void main(String[] args) throws Exception {
     Configuration conf = NutchConfiguration.create();
@@ -55,7 +58,7 @@ public class Benchmark extends Configured implements Tool {
     OutputStream os = fs.create(new Path(seedsDir, "seeds"));
     for (int i = 0; i < count; i++) {
       String url = "http://www.test-" + i + ".com/\r\n";
-      os.write(url.getBytes());
+      os.write(url.getBytes(StandardCharsets.UTF_8));
     }
     os.flush();
     os.close();

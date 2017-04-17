@@ -18,6 +18,7 @@
 package org.apache.nutch.util;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 
 public class TimingUtil {
 
@@ -31,7 +32,7 @@ public class TimingUtil {
    * @param end
    *          The end of the time period
    * @return a string of the form "XhYmZs" when the elapsed time is X hours, Y
-   *         minutes and Z seconds or null if start > end.
+   *         minutes and Z seconds or null if start &gt; end.
    */
   public static String elapsedTime(long start, long end) {
     if (start > end) {
@@ -45,7 +46,7 @@ public class TimingUtil {
       start += TIME_FACTOR[i] * elapsedTime[i];
     }
 
-    NumberFormat nf = NumberFormat.getInstance();
+    NumberFormat nf = NumberFormat.getInstance(Locale.ROOT);
     nf.setMinimumIntegerDigits(2);
     StringBuffer buf = new StringBuffer();
     for (int i = 0; i < elapsedTime.length; i++) {

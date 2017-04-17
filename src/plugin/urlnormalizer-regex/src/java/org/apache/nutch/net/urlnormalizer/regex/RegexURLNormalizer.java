@@ -17,10 +17,14 @@
 
 package org.apache.nutch.net.urlnormalizer.regex;
 
+import java.lang.invoke.MethodHandles;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,11 +59,11 @@ import org.xml.sax.InputSource;
  * This class uses the <tt>urlnormalizer.regex.file</tt> property. It should be
  * set to the file name of an xml file which should contain the patterns and
  * substitutions to be done on encountered URLs.
- * </p>
+ *
  * <p>
  * This class also supports different rules depending on the scope. Please see
  * the javadoc in {@link org.apache.nutch.net.URLNormalizers} for more details.
- * </p>
+ *
  * 
  * @author Luke Baker
  * @author Andrzej Bialecki
@@ -67,7 +71,7 @@ import org.xml.sax.InputSource;
 public class RegexURLNormalizer extends Configured implements URLNormalizer {
 
   private static final Logger LOG = LoggerFactory
-      .getLogger(RegexURLNormalizer.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /**
    * Class which holds a compiled pattern and its corresponding substition
@@ -205,8 +209,8 @@ public class RegexURLNormalizer extends Configured implements URLNormalizer {
       LOG.info("loading " + filename);
     }
     try {
-      FileReader reader = new FileReader(filename);
-      return readConfiguration(reader);
+      InputStreamReader isr = new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8);
+      return readConfiguration(isr);
     } catch (Exception e) {
       LOG.error("Error loading rules from '" + filename + "': " + e);
       return EMPTY_RULES;

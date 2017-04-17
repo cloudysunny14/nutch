@@ -17,6 +17,7 @@
 
 package org.apache.nutch.net;
 
+import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,30 +52,30 @@ import org.apache.nutch.util.ObjectCache;
  * order). If there are more normalizers activated than explicitly named on this
  * list, the remaining ones will be run in random order after the ones specified
  * on the list are executed.
- * </p>
+ *
  * <p>
  * You can define a set of contexts (or scopes) in which normalizers may be
  * called. Each scope can have its own list of normalizers (defined in
- * "urlnormalizer.scope.<scope_name>" property) and its own order (defined in
- * "urlnormalizer.order.<scope_name>" property). If any of these properties are
+ * "urlnormalizer.scope.&lt;scope_name&gt;" property) and its own order (defined in
+ * "urlnormalizer.order.&lt;scope_name&gt;" property). If any of these properties are
  * missing, default settings are used for the global scope.
- * </p>
+ *
  * <p>
  * In case no normalizers are required for any given scope, a
  * <code>org.apache.nutch.net.urlnormalizer.pass.PassURLNormalizer</code> should
  * be used.
- * </p>
+ *
  * <p>
  * Each normalizer may further select among many configurations, depending on
  * the scope in which it is called, because the scope name is passed as a
  * parameter to each normalizer. You can also use the same normalizer for many
  * scopes.
- * </p>
+ *
  * <p>
  * Several scopes have been defined, and various Nutch tools will attempt using
  * scope-specific normalizers first (and fall back to default config if
  * scope-specific configuration is missing).
- * </p>
+ *
  * <p>
  * Normalizers may be run several times, to ensure that modifications introduced
  * by normalizers at the end of the list can be further reduced by normalizers
@@ -83,7 +84,7 @@ import org.apache.nutch.util.ObjectCache;
  * want to run this loop up to the number of activated normalizers. This loop
  * count can be configured through <tt>urlnormalizer.loop.count</tt> property.
  * As soon as the url is unchanged the loop will stop and return the result.
- * </p>
+ *
  * 
  * @author Andrzej Bialecki
  */
@@ -115,8 +116,8 @@ public final class URLNormalizers {
    */
   public static final String SCOPE_OUTLINK = "outlink";
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(URLNormalizers.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /* Empty extension list for caching purposes. */
   private final List<Extension> EMPTY_EXTENSION_LIST = Collections.emptyList();

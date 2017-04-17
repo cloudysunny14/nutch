@@ -38,8 +38,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -54,8 +56,8 @@ import java.util.*;
 
 public class HostInjectorJob implements Tool {
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(HostInjectorJob.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private Configuration conf;
 
@@ -124,7 +126,7 @@ public class HostInjectorJob implements Tool {
         String keymd = keysIter.next();
         String valuemd = metadata.get(keymd);
         host.getMetadata().put(new Utf8(keymd),
-            ByteBuffer.wrap(valuemd.getBytes()));
+            ByteBuffer.wrap(valuemd.getBytes(StandardCharsets.UTF_8)));
       }
       String hostname;
       if (url.indexOf("://") > -1) {

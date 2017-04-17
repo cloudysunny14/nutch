@@ -23,6 +23,7 @@ import org.apache.nutch.storage.WebPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ import java.util.Set;
 public abstract class AbstractFetchSchedule extends Configured implements
     FetchSchedule {
   private static final Logger LOG = LoggerFactory
-      .getLogger(AbstractFetchSchedule.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   protected int defaultInterval;
   protected int maxInterval;
@@ -76,6 +77,7 @@ public abstract class AbstractFetchSchedule extends Configured implements
    * @param url
    *          URL of the page.
    * @param page
+   *          {@link WebPage} object relative to the URL
    */
   @Override
   public void initializeSchedule(String url, WebPage page) {
@@ -104,13 +106,7 @@ public abstract class AbstractFetchSchedule extends Configured implements
    * @param url
    *          URL of the page
    * @param page
-   * @return adjusted page information, including all original information.
-   *         NOTE: this may be a different instance than
-   * @param datum
-   *          , but implementations should make sure that it contains at least
-   *          all information from
-   * @param datum
-   *          .
+   *          {@link WebPage} object relative to the URL
    */
   @Override
   public void setPageGoneSchedule(String url, WebPage page, long prevFetchTime,
@@ -134,6 +130,7 @@ public abstract class AbstractFetchSchedule extends Configured implements
    * @param url
    *          URL of the page
    * @param page
+   *          {@link WebPage} object relative to the URL
    * @param prevFetchTime
    *          previous fetch time
    * @param prevModifiedTime
@@ -163,15 +160,15 @@ public abstract class AbstractFetchSchedule extends Configured implements
    * in the current fetchlist. NOTE: a true return value does not guarantee that
    * the page will be fetched, it just allows it to be included in the further
    * selection process based on scores. The default implementation checks
-   * <code>fetchTime</code>, if it is higher than the
-   * 
-   * @param curTime
-   *          it returns false, and true otherwise. It will also check that
-   *          fetchTime is not too remote (more than <code>maxInterval</code),
-   *          in which case it lowers the interval and returns true.
+   * <code>fetchTime</code>, if it is higher than the current time
+   * it returns false, and true otherwise. It will also check that
+   * fetchTime is not too remote (more than <code>maxInterval</code>),
+   * in which case it lowers the interval and returns true.
+   *
    * @param url
    *          URL of the page
    * @param page
+   *          {@link WebPage} object relative to the URL
    * @param curTime
    *          reference time (usually set to the time when the fetchlist
    *          generation process was started).
@@ -200,6 +197,7 @@ public abstract class AbstractFetchSchedule extends Configured implements
    * @param url
    *          URL of the page
    * @param page
+   *          {@link WebPage} object relative to the URL
    * @param asap
    *          if true, force refetch as soon as possible - this sets the
    *          fetchTime to now. If false, force refetch whenever the next fetch

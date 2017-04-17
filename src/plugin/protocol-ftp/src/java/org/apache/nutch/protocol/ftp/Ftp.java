@@ -17,6 +17,7 @@
 
 package org.apache.nutch.protocol.ftp;
 
+import java.lang.invoke.MethodHandles;
 import crawlercommons.robots.BaseRobotRules;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
 import org.apache.hadoop.conf.Configuration;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This class is a protocol plugin used for ftp: scheme. It creates
@@ -42,7 +44,8 @@ import java.util.HashSet;
  */
 public class Ftp implements Protocol {
 
-  public static final Logger LOG = LoggerFactory.getLogger(Ftp.class);
+  protected static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
@@ -113,8 +116,8 @@ public class Ftp implements Protocol {
    * 
    * @param url
    *          Text containing the ftp url
-   * @param datum
-   *          The CrawlDatum object corresponding to the url
+   * @param page
+   *          {@link WebPage} object relative to the URL
    * 
    * @return {@link ProtocolOutput} object for the url
    */
@@ -243,7 +246,7 @@ public class Ftp implements Protocol {
     System.err.println("Last-Modified: "
         + content.getMetadata().get(Response.LAST_MODIFIED));
     if (dumpContent) {
-      System.out.print(new String(content.getContent()));
+      System.out.print(new String(content.getContent(), StandardCharsets.UTF_8));
     }
 
     ftp = null;

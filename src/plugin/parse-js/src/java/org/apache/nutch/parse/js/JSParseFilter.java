@@ -16,6 +16,7 @@
  */
 package org.apache.nutch.parse.js;
 
+import java.lang.invoke.MethodHandles;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +65,8 @@ import org.w3c.dom.NodeList;
  * @author Andrzej Bialecki &lt;ab@getopt.org&gt;
  */
 public class JSParseFilter implements ParseFilter, Parser {
-  public static final Logger LOG = LoggerFactory.getLogger(JSParseFilter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int MAX_TITLE_LEN = 80;
 
@@ -78,10 +81,10 @@ public class JSParseFilter implements ParseFilter, Parser {
    *          {@link WebPage} object relative to the URL
    * @param parse
    *          {@link Parse} object holding parse status
-   * @param metatags
-   *          within the {@link NutchDocument}
+   * @param metaTags
+   *          within the {@link HTMLMetaTags}
    * @param doc
-   *          The {@link NutchDocument} object
+   *          The {@link DocumentFragment} object
    * @return parse the actual {@link Parse} object
    */
   @Override
@@ -150,7 +153,7 @@ public class JSParseFilter implements ParseFilter, Parser {
             links = getJSLinks(anode.getNodeValue(), "", base);
           } else if (anode.getNodeName().equalsIgnoreCase("href")) {
             String val = anode.getNodeValue();
-            if (val != null && val.toLowerCase().indexOf("javascript:") != -1) {
+            if (val != null && val.toLowerCase(Locale.ROOT).indexOf("javascript:") != -1) {
               links = getJSLinks(val, "", base);
             }
           }
@@ -178,7 +181,7 @@ public class JSParseFilter implements ParseFilter, Parser {
   public Parse getParse(String url, WebPage page) {
     String type = TableUtil.toString(page.getContentType());
     if (type != null && !type.trim().equals("")
-        && !type.toLowerCase().startsWith("application/x-javascript"))
+        && !type.toLowerCase(Locale.ROOT).startsWith("application/x-javascript"))
       return ParseStatusUtils.getEmptyParse(
           ParseStatusCodes.FAILED_INVALID_FORMAT, "Content not JavaScript: '"
               + type + "'", getConf());

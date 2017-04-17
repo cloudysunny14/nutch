@@ -17,10 +17,15 @@
 package org.apache.nutch.urlfilter.api;
 
 // JDK imports
+import java.lang.invoke.MethodHandles;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +52,8 @@ import org.apache.nutch.net.URLFilter;
 public abstract class RegexURLFilterBaseTest {
 
   /** My logger */
-  protected static final Logger LOG = LoggerFactory
-      .getLogger(RegexURLFilterBaseTest.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private final static String SEPARATOR = System.getProperty("file.separator");
   private final static String SAMPLES = System.getProperty("test.data", ".");
@@ -57,8 +62,8 @@ public abstract class RegexURLFilterBaseTest {
 
   protected void bench(int loops, String file) {
     try {
-      bench(loops, new FileReader(SAMPLES + SEPARATOR + file + ".rules"),
-          new FileReader(SAMPLES + SEPARATOR + file + ".urls"));
+      bench(loops, new InputStreamReader(new FileInputStream(SAMPLES + SEPARATOR + file + ".rules"), StandardCharsets.UTF_8),
+          new InputStreamReader(new FileInputStream(SAMPLES + SEPARATOR + file + ".urls"), StandardCharsets.UTF_8));
     } catch (Exception e) {
       fail(e.toString());
     }
@@ -81,8 +86,8 @@ public abstract class RegexURLFilterBaseTest {
 
   protected void test(String file) {
     try {
-      test(new FileReader(SAMPLES + SEPARATOR + file + ".rules"),
-          new FileReader(SAMPLES + SEPARATOR + file + ".urls"));
+      test(new InputStreamReader(new FileInputStream(SAMPLES + SEPARATOR + file + ".rules"), StandardCharsets.UTF_8),
+          new InputStreamReader(new FileInputStream(SAMPLES + SEPARATOR + file + ".urls"), StandardCharsets.UTF_8));
     } catch (Exception e) {
       fail(e.toString());
     }

@@ -43,7 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -61,8 +63,9 @@ import java.util.*;
  **/
 public class InjectorJob extends NutchTool implements Tool {
 
-  public static final Logger LOG = LoggerFactory.getLogger(InjectorJob.class);
-
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
+  
   private static final Set<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
   static {
@@ -181,7 +184,7 @@ public class InjectorJob extends NutchTool implements Tool {
           String keymd = keysIter.next();
           String valuemd = metadata.get(keymd);
           row.getMetadata().put(new Utf8(keymd),
-              ByteBuffer.wrap(valuemd.getBytes()));
+              ByteBuffer.wrap(valuemd.getBytes(StandardCharsets.UTF_8)));
         }
 
         if (customScore != -1)
@@ -260,7 +263,7 @@ public class InjectorJob extends NutchTool implements Tool {
   }
 
   public void inject(Path urlDir) throws Exception {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     long start = System.currentTimeMillis();
     LOG.info("InjectorJob: starting at " + sdf.format(start));
     LOG.info("InjectorJob: Injecting urlDir: " + urlDir);

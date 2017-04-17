@@ -16,6 +16,7 @@
  */
 package org.apache.nutch.protocol.file;
 
+import java.lang.invoke.MethodHandles;
 import crawlercommons.robots.BaseRobotRules;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.net.protocols.Response;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -40,7 +42,8 @@ import java.util.HashSet;
  */
 public class File implements Protocol {
 
-  public static final Logger LOG = LoggerFactory.getLogger(File.class);
+  protected static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
@@ -98,8 +101,8 @@ public class File implements Protocol {
    * 
    * @param url
    *          Text containing the url
-   * @param datum
-   *          The CrawlDatum object corresponding to the url
+   * @param page
+   *          {@link WebPage} object relative to the URL
    * 
    * @return {@link ProtocolOutput} object for the content of the file indicated
    *         by url
@@ -218,7 +221,7 @@ public class File implements Protocol {
     }
 
     if (dumpContent) {
-      System.out.print(new String(content.getContent()));
+      System.out.print(new String(content.getContent(), StandardCharsets.UTF_8));
     }
 
     file = null;

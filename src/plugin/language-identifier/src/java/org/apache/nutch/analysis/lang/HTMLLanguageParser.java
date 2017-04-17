@@ -18,6 +18,7 @@ package org.apache.nutch.analysis.lang;
 
 // JDK imports
 
+import java.lang.invoke.MethodHandles;
 import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
@@ -39,6 +40,7 @@ import org.w3c.dom.Node;
 
 import java.lang.CharSequence;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -47,8 +49,8 @@ import java.util.*;
  */
 public class HTMLLanguageParser implements ParseFilter {
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(HTMLLanguageParser.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
@@ -67,7 +69,7 @@ public class HTMLLanguageParser implements ParseFilter {
         String[] values = p.getProperty(key).split(",", -1);
         LANGUAGES_MAP.put(key, key);
         for (int i = 0; i < values.length; i++) {
-          LANGUAGES_MAP.put(values[i].trim().toLowerCase(), key);
+          LANGUAGES_MAP.put(values[i].trim().toLowerCase(Locale.ROOT), key);
         }
       }
     } catch (Exception e) {
@@ -83,12 +85,19 @@ public class HTMLLanguageParser implements ParseFilter {
 
   /**
    * Scan the HTML document looking at possible indications of content language<br>
-   * <li>1. html lang attribute
-   * (http://www.w3.org/TR/REC-html40/struct/dirlang.html#h-8.1) <li>2. meta
+   * <ol>
+   * <li>html lang attribute
+   * (http://www.w3.org/TR/REC-html40/struct/dirlang.html#h-8.1)
+   * </li>
+   * <li>meta
    * dc.language
    * (http://dublincore.org/documents/2000/07/16/usageguide/qualified
-   * -html.shtml#language) <li>3. meta http-equiv (content-language)
-   * (http://www.w3.org/TR/REC-html40/struct/global.html#h-7.4.4.2) <br>
+   * -html.shtml#language)
+   * </li>
+   * <li>meta http-equiv (content-language)
+   * (http://www.w3.org/TR/REC-html40/struct/global.html#h-7.4.4.2)
+   * </li>
+   * </ol>
    */
   public Parse filter(String url, WebPage page, Parse parse,
       HTMLMetaTags metaTags, DocumentFragment doc) {
@@ -115,7 +124,7 @@ public class HTMLLanguageParser implements ParseFilter {
 
     if (lang != null) {
       page.getMetadata().put(new Utf8(Metadata.LANGUAGE),
-          ByteBuffer.wrap(lang.getBytes()));
+          ByteBuffer.wrap(lang.getBytes(StandardCharsets.UTF_8)));
       return parse;
     }
 
@@ -255,7 +264,7 @@ public class HTMLLanguageParser implements ParseFilter {
                 Node attrnode = attrs.item(i);
                 if ("http-equiv".equalsIgnoreCase(attrnode.getNodeName())) {
                   if ("content-language".equals(attrnode.getNodeValue()
-                      .toLowerCase())) {
+                      .toLowerCase(Locale.ROOT))) {
                     Node valueattr = attrs.getNamedItem("content");
                     if (valueattr != null) {
                       httpEquiv = parseLanguage(valueattr.getNodeValue());
@@ -296,7 +305,7 @@ public class HTMLLanguageParser implements ParseFilter {
         code = langs[i].split("-")[0];
         code = code.split("_")[0];
         // Find the ISO 639 code
-        language = (String) LANGUAGES_MAP.get(code.toLowerCase());
+        language = (String) LANGUAGES_MAP.get(code.toLowerCase(Locale.ROOT));
         i++;
       }
 

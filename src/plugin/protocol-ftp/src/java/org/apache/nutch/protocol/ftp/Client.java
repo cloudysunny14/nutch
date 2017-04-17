@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
@@ -53,7 +54,7 @@ import org.apache.commons.net.ftp.FTPConnectionClosedException;
  * servers out there, when partial downloading is enforeced by closing data
  * channel socket on our client side, the server side immediately closes control
  * channel (socket). Our codes deal with such a bad behavior. (4) LIST is used
- * to obtain remote file attributes if possible. MDTM & SIZE would be nice, but
+ * to obtain remote file attributes if possible. MDTM &amp; SIZE would be nice, but
  * not as ubiquitously implemented as LIST. (5) Avoid using ABOR in single
  * thread? Do not use it at all.
  * 
@@ -330,7 +331,7 @@ public class Client extends FTP {
           + ((path == null) ? "" : path));
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(
-        socket.getInputStream()));
+        socket.getInputStream(), StandardCharsets.UTF_8));
 
     // force-close data channel socket, when download limit is reached
     // boolean mandatory_close = false;

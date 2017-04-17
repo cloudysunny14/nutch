@@ -47,7 +47,8 @@ import com.anotherbigidea.io.InStream;
  * @author Andrzej Bialecki
  */
 public class SWFParser implements Parser {
-  public static final Logger LOG = LoggerFactory.getLogger("org.apache.nutch.parse.swf");
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private Configuration conf = null;
 
@@ -280,7 +281,7 @@ class ExtractText extends SWFTagTypesImpl {
 
     /*
      * There are some issues with this method: sometimes SWF files define their
-     * own font, so short of OCR we cannot guess what is the glyph code -> character
+     * own font, so short of OCR we cannot guess what is the glyph code -&gt; character
      * mapping. Additionally, some files don't use literal space character, instead
      * they adjust glyphAdvances. We don't handle it at all - in such cases the text
      * will be all glued together.

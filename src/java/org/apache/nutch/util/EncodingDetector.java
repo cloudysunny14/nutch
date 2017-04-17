@@ -26,12 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple class for detecting character encodings.
@@ -44,7 +46,7 @@ import java.util.List;
  * <li>Taking a set of clues and making a "best guess" as to the "real"
  * encoding.</li>
  * </ol>
- * </p>
+ *
  * 
  * <p>
  * A caller will often have some extra information about what the encoding might
@@ -55,7 +57,7 @@ import java.util.List;
  * <li>Run step (1) to generate a set of auto-detected clues;</li>
  * <li>Combine these clues with the caller-dependent "extra clues" available;</li>
  * <li>Run step (2) to guess what the most probable answer is.</li>
- * </p>
+ * </ul>
  */
 public class EncodingDetector {
 
@@ -72,7 +74,7 @@ public class EncodingDetector {
     }
 
     public EncodingClue(String value, String source, int confidence) {
-      this.value = value.toLowerCase();
+      this.value = value.toLowerCase(Locale.ROOT);
       this.source = source;
       this.confidence = confidence;
     }
@@ -102,8 +104,8 @@ public class EncodingDetector {
     }
   }
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(EncodingDetector.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   public static final int NO_THRESHOLD = -1;
 
@@ -210,9 +212,7 @@ public class EncodingDetector {
 
   /**
    * Guess the encoding with the previously specified list of clues.
-   * 
-   * @param row
-   *          URL's row
+   *
    * @param defaultValue
    *          Default encoding to return if no encoding can be detected with
    *          enough confidence. Note that this will <b>not</b> be normalized
@@ -269,7 +269,7 @@ public class EncodingDetector {
           LOG.trace(baseUrl + ": Choosing encoding: " + charset
               + " with confidence " + clue.confidence);
         }
-        return resolveEncodingAlias(charset).toLowerCase();
+        return resolveEncodingAlias(charset).toLowerCase(Locale.ROOT);
       } else if (clue.confidence == NO_THRESHOLD && bestClue == defaultClue) {
         bestClue = clue;
       }
@@ -278,7 +278,7 @@ public class EncodingDetector {
     if (LOG.isTraceEnabled()) {
       LOG.trace(baseUrl + ": Choosing encoding: " + bestClue);
     }
-    return bestClue.value.toLowerCase();
+    return bestClue.value.toLowerCase(Locale.ROOT);
   }
 
   /** Clears all clues. */
@@ -339,7 +339,7 @@ public class EncodingDetector {
   /**
    * Parse the character encoding from the specified content type header. If the
    * content type is null, or there is no explicit character encoding,
-   * <code>null</code> is returned. <br />
+   * <code>null</code> is returned. <p>
    * This method was copied from org.apache.catalina.util.RequestUtil, which is
    * licensed under the Apache License, Version 2.0 (the "License").
    * 

@@ -16,13 +16,18 @@
  */
 package org.apache.nutch.urlfilter.domain;
 
+import java.lang.invoke.MethodHandles;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Locale;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -39,7 +44,6 @@ import org.apache.nutch.util.domain.DomainSuffix;
  * Filters URLs based on a file containing domain suffixes, domain names, and
  * hostnames. Only a url that matches one of the suffixes, domains, or hosts
  * present in the file is allowed.
- * </p>
  * 
  * <p>
  * Urls are checked in order of domain suffix, domain name, and hostname against
@@ -57,18 +61,17 @@ import org.apache.nutch.util.domain.DomainSuffix;
  * only urls from www.apache.org. There is no specific ordering to entries. The
  * entries are from more general to more specific with the more general
  * overridding the more specific.
- * </p>
  * 
  * The domain file defaults to domain-urlfilter.txt in the classpath but can be
  * overridden using the:
  * 
  * <ul>
- * <ol>
+ * <li>
  * property "urlfilter.domain.file" in ./conf/nutch-*.xml, and
- * </ol>
- * <ol>
+ * </li>
+ * <li>
  * attribute "file" in plugin.xml of this plugin
- * </ol>
+ * </li>
  * </ul>
  * 
  * the attribute "file" has higher precedence if defined.
@@ -76,7 +79,7 @@ import org.apache.nutch.util.domain.DomainSuffix;
 public class DomainURLFilter implements URLFilter {
 
   private static final Logger LOG = LoggerFactory
-      .getLogger(DomainURLFilter.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   // read in attribute "file" of this plugin.
   private static String attributeFile = null;
@@ -110,7 +113,6 @@ public class DomainURLFilter implements URLFilter {
    * @param domainFile
    *          The domain file, overrides domain-urlfilter.text default.
    * 
-   * @throws IOException
    */
   public DomainURLFilter(String domainFile) {
     this.domainFile = domainFile;
@@ -167,7 +169,7 @@ public class DomainURLFilter implements URLFilter {
     }
     try {
       if (reader == null) {
-        reader = new FileReader(file);
+        reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
       }
       readConfiguration(reader);
     } catch (IOException e) {
@@ -185,7 +187,7 @@ public class DomainURLFilter implements URLFilter {
 
       // match for suffix, domain, and host in that order. more general will
       // override more specific
-      String domain = URLUtil.getDomainName(url).toLowerCase().trim();
+      String domain = URLUtil.getDomainName(url).toLowerCase(Locale.ROOT).trim();
       String host = URLUtil.getHost(url);
       String suffix = null;
       DomainSuffix domainSuffix = URLUtil.getDomainSuffix(url);

@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -59,8 +60,8 @@ import java.util.regex.Pattern;
 
 public class WebTableReader extends NutchTool implements Tool {
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(WebTableReader.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   public static class WebTableStatMapper extends
       GoraMapper<String, WebPage, Text, LongWritable> {
@@ -248,11 +249,12 @@ public class WebTableReader extends NutchTool implements Tool {
         System.out.println(getPageRepresentation(url, page, dumpContent,
             dumpHeaders, dumpLinks, dumpText));
       } catch (Exception e) {
-        e.printStackTrace();
+        LOG.error(StringUtils.stringifyException(e));
       }
     }
-    if (!found)
-      System.out.println(key + " not found");
+    if (!found) {
+      LOG.info("{} not found", key);
+    }
     result.close();
     datastore.close();
   }

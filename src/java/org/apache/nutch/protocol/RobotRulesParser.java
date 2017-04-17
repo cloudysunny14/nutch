@@ -19,13 +19,17 @@ package org.apache.nutch.protocol;
 
 // JDK imports
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 // Commons Logging imports
+import org.apache.hadoop.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +50,8 @@ import crawlercommons.robots.SimpleRobotRulesParser;
  */
 public abstract class RobotRulesParser implements Configurable {
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(RobotRulesParser.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   protected static final Hashtable<String, BaseRobotRules> CACHE = new Hashtable<String, BaseRobotRules>();
 
@@ -172,7 +176,7 @@ public abstract class RobotRulesParser implements Configurable {
       BaseRobotRules rules = robotParser.parseContent(argv[0], robotsBytes,
           "text/plain", argv[2]);
 
-      LineNumberReader testsIn = new LineNumberReader(new FileReader(argv[1]));
+      LineNumberReader testsIn = new LineNumberReader(new InputStreamReader(new FileInputStream(argv[1]), StandardCharsets.UTF_8));
       String testPath = testsIn.readLine().trim();
       while (testPath != null) {
         System.out.println((rules.isAllowed(testPath) ? "allowed"
@@ -181,7 +185,7 @@ public abstract class RobotRulesParser implements Configurable {
       }
       testsIn.close();
     } catch (Exception e) {
-      e.printStackTrace();
+      LOG.error(StringUtils.stringifyException(e));
     }
   }
 }
