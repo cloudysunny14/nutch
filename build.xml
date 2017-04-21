@@ -597,7 +597,7 @@
 	
   <target name="compile-avro-schema" depends="resolve-default" description="--> compile the avro schema(s) in src/gora/*.avsc">
     <typedef name="schema" 
-  	         classname="org.apache.avro.specific.SchemaTask"
+  	         classname="org.apache.avro.compiler.specific.SchemaTask"
   	         classpathref="classpath" />
     
   	<mkdir dir="${build.gora}" />
@@ -616,9 +616,10 @@
   <target name="generate-gora-src" depends="init" description="--> compile the avro schema(s) in src/gora/*.avsc">
     <java classname="org.apache.gora.compiler.cli.GoraCompilerCLI">
      <classpath refid="classpath"/>
-     <arg value="src/gora/webpage.avsc"/>
-     <!--arg value="src/gora/host.avsc"/-->
-     <arg value="${src.dir}"/>
+     <!--<arg value="src/gora/webpage.avsc"/>-->
+     <arg value="src/gora/host.avsc"/>
+     <!--<arg value="${src.dir}"/>-->
+     <arg value="./"/>
     </java>
  </target>
 
@@ -1093,4 +1094,5 @@
       </classpath>
     </eclipse>
   </target>
+  <setproxy proxyhost="172.16.109.13" proxyport="8080" proxyuser="harigae" proxypassword="harigae" nonproxyhosts="localhost"/>
 </project>

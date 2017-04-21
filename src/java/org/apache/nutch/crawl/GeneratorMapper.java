@@ -50,6 +50,7 @@ GoraMapper<String, WebPage, SelectorEntry, WebPage> {
   public void map(String reversedUrl, WebPage page, Context context)
       throws IOException, InterruptedException {
     String url = TableUtil.unreverseUrl(reversedUrl);
+    GeneratorJob.LOG.info("Start Mapper!" + url);
 
     if (Mark.GENERATE_MARK.checkMark(page) != null) {
       GeneratorJob.LOG.debug("Skipping {}; already generated", url);
@@ -108,7 +109,10 @@ GoraMapper<String, WebPage, SelectorEntry, WebPage> {
       return;
 
     entry.set(url, score);
+    GeneratorJob.LOG.info("URL:" + url + ", Score:" + score);
+    GeneratorJob.LOG.info("EntrySet!" + entry);
     context.write(entry, page);
+    GeneratorJob.LOG.info("Write!" + entry);
   }
 
   @Override
